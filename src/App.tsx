@@ -24,13 +24,14 @@ async function App() {
     const loadAnswers = async () => {
       const q1 = "Hi there, how are you?"
       console.log("User: " + q1)
-      const a1 = await session.prompt(q1)
-      console.log("AI: " + a1)
+      // const a1 = await session.prompt(q1)
+      session.prompt(q1).then(a => setAnswers(answers => [...answers, a]))
+      console.log("AI: " + answers[0])
       const q2 = "Summerize what you said"
       console.log("User: " + q2)
-      const a2 = await session.prompt(q2)
+      session.prompt(q2).then(a => setAnswers(answers => [...answers, a]))
+      console.log("AI: " + answers[1])
       setQuestions([q1, q2])
-      setAnswers([a1, a2])
     }
 
     loadAnswers()
