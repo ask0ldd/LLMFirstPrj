@@ -1,33 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import {fileURLToPath} from "url"
+import path from "path"
+import {LlamaModel, LlamaContext, LlamaChatSession} from "node-llama-cpp"
+import { useEffect, useState } from 'react'
 
-function App() {
-  const [count, setCount] = useState(0)
+async function App() {
+    // new URL('file:///C:/path/').pathname;      // Incorrect: /C:/path/
+  // fileURLToPath('file:///C:/path/');
+
+  // const __dirname = path.dirname(fileURLToPath(import.meta.url))
+  const __dirname = path.dirname(fileURLToPath("file:///G:/AI"))
+
+  const model = new LlamaModel({
+      modelPath: path.join(__dirname, "models", "mistral-7b-openorca-oasst_top1_2023-08-25-v2.Q4_K_M")
+  });
+  const context = new LlamaContext({model})
+  const session = new LlamaChatSession({context})
+
+  const [questions, setQuestions] = useState<Array<string>>([])
+  const [answers, setAnswers] = useState<Array<string>>([])
+
+  useEffect(() => {
+    const loadAnswers = async () => {
+      const q1 = "Hi there, how are you?"
+      console.log("User: " + q1)
+      const a1 = await session.prompt(q1)
+      console.log("AI: " + a1)
+      const q2 = "Summerize what you said"
+      console.log("User: " + q2)
+      const a2 = await session.prompt(q2)
+      setQuestions([q1, q2])
+      setAnswers([a1, a2])
+    }
+
+    loadAnswers()
+  }, [])
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <span>{questions[0]}</span><br/>
+      <span>{answers[0]}</span><br/>
+      <span>{questions[1]}</span><br/>
+      <span>{answers[1]}</span><br/>
     </>
   )
 }
