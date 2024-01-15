@@ -1,41 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import './App.css'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 function App() {
   const decoder = new TextDecoder('utf-8');
   const [streamedDatas, setStreamedDatas] = useState<string>("")
 
-  /*useEffect(() => {
-
-    fetch('http://localhost:3000/chat',
-    {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({"question" : "what is the name of earth's satellite?"})      
-    })
-      .then(response => {
-        const reader = response.body?.getReader()
-        reader?.read().then(function pump ({ done, value }) : void {
-          if (done) {
-            // Do something with last chunk of data then exit reader
-            setStreamedDatas(streamedDatas => streamedDatas + value)
-            return;
-          }
-          // Otherwise do something here to process current chunk
-          setStreamedDatas(streamedDatas => streamedDatas + value)
-          // Read some more, and call this function again
-          reader.read().then(pump)
-          return 
-        });
-      })
-      .catch(error => console.error('Error fetching the stream: ', error))
-
-  }, [])*/
-
   async function handleClick(){
+    const inputValue = (document.getElementById('userMessage') as HTMLInputElement).value
+    if(inputValue == null) return
     setStreamedDatas('')
     const response = await fetch('http://localhost:3000/chat',
     {
@@ -43,7 +16,7 @@ function App() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({"question" : "what is the name of earth's satellite?"})      
+        body: JSON.stringify({"question" : inputValue})      
     })
     const reader = response.body?.getReader()
     // eslint-disable-next-line no-constant-condition
@@ -60,10 +33,11 @@ function App() {
 
 
   return (
-    <>
-      <button onClick={handleClick}>fetch</button><br/>
+    <div style={{display:'flex', flexDirection:'column', columnGap:"1rem"}}>
+      <input name="userMessage" id="userMessage" type="text"/>
+      <button onClick={handleClick}>fetch</button>
       <span>{streamedDatas}</span>
-    </>
+    </div>
   )
 }
 
