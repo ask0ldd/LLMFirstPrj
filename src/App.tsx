@@ -1,48 +1,68 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import './App.css'
-import {fileURLToPath} from "url"
-import path from "path"
-import {LlamaModel, LlamaContext, LlamaChatSession} from "node-llama-cpp"
 import { useEffect, useState } from 'react'
 
-async function App() {
-    // new URL('file:///C:/path/').pathname;      // Incorrect: /C:/path/
-  // fileURLToPath('file:///C:/path/');
+function App() {
+  const decoder = new TextDecoder('utf-8');
+  const [streamedDatas, setStreamedDatas] = useState<string>("")
 
-  // const __dirname = path.dirname(fileURLToPath(import.meta.url))
-  const __dirname = path.dirname(fileURLToPath("file:///G:/AI"))
+  /*useEffect(() => {
 
-  const model = new LlamaModel({
-      modelPath: path.join(__dirname, "models", "mistral-7b-openorca-oasst_top1_2023-08-25-v2.Q4_K_M")
-  });
-  const context = new LlamaContext({model})
-  const session = new LlamaChatSession({context})
+    fetch('http://localhost:3000/chat',
+    {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({"question" : "what is the name of earth's satellite?"})      
+    })
+      .then(response => {
+        const reader = response.body?.getReader()
+        reader?.read().then(function pump ({ done, value }) : void {
+          if (done) {
+            // Do something with last chunk of data then exit reader
+            setStreamedDatas(streamedDatas => streamedDatas + value)
+            return;
+          }
+          // Otherwise do something here to process current chunk
+          setStreamedDatas(streamedDatas => streamedDatas + value)
+          // Read some more, and call this function again
+          reader.read().then(pump)
+          return 
+        });
+      })
+      .catch(error => console.error('Error fetching the stream: ', error))
 
-  const [questions, setQuestions] = useState<Array<string>>([])
-  const [answers, setAnswers] = useState<Array<string>>([])
+  }, [])*/
 
-  useEffect(() => {
-    const loadAnswers = async () => {
-      const q1 = "Hi there, how are you?"
-      console.log("User: " + q1)
-      // const a1 = await session.prompt(q1)
-      session.prompt(q1).then(a => setAnswers(answers => [...answers, a]))
-      console.log("AI: " + answers[0])
-      const q2 = "Summerize what you said"
-      console.log("User: " + q2)
-      session.prompt(q2).then(a => setAnswers(answers => [...answers, a]))
-      console.log("AI: " + answers[1])
-      setQuestions([q1, q2])
+  async function handleClick(){
+    setStreamedDatas('')
+    const response = await fetch('http://localhost:3000/chat',
+    {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({"question" : "what is the name of earth's satellite?"})      
+    })
+    const reader = response.body?.getReader()
+    // eslint-disable-next-line no-constant-condition
+    while (true && reader) {
+      const { done, value } = await reader.read();
+      const chunk = decoder.decode(value, { stream: true })
+      setStreamedDatas(data => data + chunk)
+      if (done) {
+        // Do something with last chunk of data then exit reader
+        return
+      }
     }
+  }
 
-    loadAnswers()
-  }, [])
 
   return (
     <>
-      <span>{questions[0]}</span><br/>
-      <span>{answers[0]}</span><br/>
-      <span>{questions[1]}</span><br/>
-      <span>{answers[1]}</span><br/>
+      <button onClick={handleClick}>fetch</button><br/>
+      <span>{streamedDatas}</span>
     </>
   )
 }
