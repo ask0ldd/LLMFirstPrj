@@ -22,7 +22,7 @@ function App() {
     if(inputValue == null) return
     
     initStreamedDatas()
-    setHistory(history => history + 'Question : \n' + inputValue + '\n\n')
+    setHistory(history => history + '\n\nQuestion :\n' + inputValue + '\n\nAnswer :\n')
     const response = await fetch('http://localhost:3000/chat',
     {
         method: 'POST',
@@ -37,9 +37,11 @@ function App() {
       const { done, value } = await reader.read();
       const chunk = decoder.decode(value, { stream: true })
       setStreamedDatas(chunk)
+      setHistory(history => history  + chunk)
       if (done) {
         // Do something with last chunk of data then exit reader
-        setHistory(history => history  + 'Answer : \n' + streamedDatasRef.current.trim() + '\n\n')
+        // setHistory(history => history  + 'Answer : \n' + streamedDatasRef.current.trim() + '\n\n')
+        setHistory(history => history + '\n')
         return
       }
     }
