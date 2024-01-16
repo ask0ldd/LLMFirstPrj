@@ -1,14 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import './App.css'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 function App() {
   const decoder = new TextDecoder('utf-8');
-  const [streamedDatas, setStreamedDatas] = useState<string>("")
+  const [streamedDatas, _setStreamedDatas] = useState<string>("")
+  const streamedDatasRef = useRef('')
+  function setStreamedDatas(chunk : string){
+    _setStreamedDatas(data => data + chunk)
+    streamedDatasRef.current += chunk
+  }
+  const [history, setHistory] = useState<string>("")
 
   async function handleClick(){
+
     const inputValue = (document.getElementById('userMessage') as HTMLTextAreaElement).value
     if(inputValue == null) return
+
+    setHistory(history => history + inputValue + '\n')
     setStreamedDatas('')
     const response = await fetch('http://localhost:3000/chat',
     {
@@ -23,9 +32,10 @@ function App() {
     while (true && reader) {
       const { done, value } = await reader.read();
       const chunk = decoder.decode(value, { stream: true })
-      setStreamedDatas(data => data + chunk)
+      setStreamedDatas(chunk)
       if (done) {
         // Do something with last chunk of data then exit reader
+        setHistory(history => history + streamedDatasRef.current + '\n')
         return
       }
     }
@@ -34,6 +44,7 @@ function App() {
 
   return (
     <div style={{display:'flex', flexDirection:'column', rowGap:"1rem", minWidth:800}}>
+      <textarea name="history" id="history" readOnly value={history}/>
       <textarea name="userMessage" id="userMessage"/>
       <button onClick={handleClick}>fetch</button>
       <div className="response">{streamedDatas}</div>
