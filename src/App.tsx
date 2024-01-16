@@ -17,7 +17,7 @@ function App() {
     const inputValue = (document.getElementById('userMessage') as HTMLTextAreaElement).value
     if(inputValue == null) return
 
-    setHistory(history => history + inputValue + '\n')
+    setHistory(history => history + 'Question : \n' + inputValue + '\n\n')
     setStreamedDatas('')
     const response = await fetch('http://localhost:3000/chat',
     {
@@ -35,7 +35,7 @@ function App() {
       setStreamedDatas(chunk)
       if (done) {
         // Do something with last chunk of data then exit reader
-        setHistory(history => history + streamedDatasRef.current + '\n')
+        setHistory(history => history  + 'Answer : \n' + streamedDatasRef.current + '\n\n')
         return
       }
     }

@@ -13,6 +13,10 @@ textarea {
   resize: none;
 }
 
+#history {
+  height: 30rem;
+}
+
 button {
   padding: 0rem 0.5rem;
   height: 2rem;
