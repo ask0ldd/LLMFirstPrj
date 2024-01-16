@@ -7,7 +7,7 @@ function App() {
   const [streamedDatas, setStreamedDatas] = useState<string>("")
 
   async function handleClick(){
-    const inputValue = (document.getElementById('userMessage') as HTMLInputElement).value
+    const inputValue = (document.getElementById('userMessage') as HTMLTextAreaElement).value
     if(inputValue == null) return
     setStreamedDatas('')
     const response = await fetch('http://localhost:3000/chat',
@@ -33,10 +33,10 @@ function App() {
 
 
   return (
-    <div style={{display:'flex', flexDirection:'column', columnGap:"1rem"}}>
-      <input name="userMessage" id="userMessage" type="text"/>
+    <div style={{display:'flex', flexDirection:'column', rowGap:"1rem", minWidth:800}}>
+      <textarea name="userMessage" id="userMessage"/>
       <button onClick={handleClick}>fetch</button>
-      <span>{streamedDatas}</span>
+      <div className="response">{streamedDatas}</div>
     </div>
   )
 }
