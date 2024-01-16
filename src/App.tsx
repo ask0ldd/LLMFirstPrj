@@ -36,6 +36,7 @@ function App() {
     while (true && reader) {
       const { done, value } = await reader.read();
       const chunk = decoder.decode(value, { stream: true })
+      if( streamedDatasRef.current == "" && chunk == " ") continue
       setStreamedDatas(chunk)
       setHistory(history => history  + chunk)
       if (done) {
