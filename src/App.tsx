@@ -10,15 +10,19 @@ function App() {
     _setStreamedDatas(data => data + chunk)
     streamedDatasRef.current += chunk
   }
+  function initStreamedDatas(){
+    _setStreamedDatas("")
+    streamedDatasRef.current = ""
+  }
   const [history, setHistory] = useState<string>("")
 
   async function handleClick(){
 
     const inputValue = (document.getElementById('userMessage') as HTMLTextAreaElement).value
     if(inputValue == null) return
-
+    
+    initStreamedDatas()
     setHistory(history => history + 'Question : \n' + inputValue + '\n\n')
-    setStreamedDatas('')
     const response = await fetch('http://localhost:3000/chat',
     {
         method: 'POST',
@@ -35,7 +39,7 @@ function App() {
       setStreamedDatas(chunk)
       if (done) {
         // Do something with last chunk of data then exit reader
-        setHistory(history => history  + 'Answer : \n' + streamedDatasRef.current + '\n\n')
+        setHistory(history => history  + 'Answer : \n' + streamedDatasRef.current.trim() + '\n\n')
         return
       }
     }
