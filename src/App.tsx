@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import './App.css'
-import { MutableRefObject, RefObject, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import DialogBlockFactory from './assets/services/DialogBlockFactory';
 
 function App() {
   const decoder = new TextDecoder('utf-8');
+
+  const streamedDatasPos = useRef(0)
+  const isStreaming = useRef(false)
   
   const [streamedDatas, _setStreamedDatas] = useState<string>("")
   const streamedDatasRef = useRef('')
@@ -29,6 +32,8 @@ function App() {
   }, [historyRef.current?.scrollHeight])
 
   async function handleClick(){
+
+    if(isStreaming.current) return
 
     // href the element?
     const inputValue = (document.getElementById('userMessage') as HTMLTextAreaElement).value
@@ -60,6 +65,8 @@ function App() {
       return historyDuplicate
     })
 
+    isStreaming.current = true
+
     // start reading the stream of datas
     while (true && reader) {
 
@@ -67,11 +74,11 @@ function App() {
       const chunk = decoder.decode(value, { stream: true })
       if(streamedDatasRef.current == "" && chunk.trim() == "") continue
       setStreamedDatas(chunk)
-      setHistory(history => {
+      /*setHistory(history => {
         const historyDuplicate = [...history]
         historyDuplicate[history.length-1].text = streamedDatasRef.current
         return historyDuplicate
-      })
+      })*/
 
       // end of read
       if (done) {
@@ -82,6 +89,7 @@ function App() {
             duplicateHistory[duplicateHistory.length-1].working = false
             return duplicateHistory
           })
+        isStreaming.current = false
         return
       }
 
@@ -91,7 +99,7 @@ function App() {
 
   return (
     <div style={{display:'flex', flexDirection:'column', rowGap:"1rem", minWidth:800}}>
-      <div ref={historyRef} id="historyContainer">
+      <div /*onScroll={handleHistoryScroll}*/ ref={historyRef} id="historyContainer">
           {history.map(chunk => DialogBlockFactory(chunk))}
       </div>
       <textarea name="userMessage" id="userMessage"/>
@@ -99,6 +107,17 @@ function App() {
       <div className="response">{streamedDatas}</div>
     </div>
   )
+
+  function addToHistory(){
+    setHistory( history => {
+      streamedDatasRef.current[streamedDatasPos.current]
+    })
+    streamedDatasPos.current++
+  }
+
+  /*function handleHistoryScroll(){
+    historyRef.current?.scrollBy(0, 10)
+  }*/
 }
 
 export default App

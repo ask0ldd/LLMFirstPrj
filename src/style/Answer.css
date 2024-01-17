@@ -36,7 +36,7 @@ article.working {
 @keyframes working-answer {
   from {
     border: 1px solid #0078d7ff;
-    box-shadow: 0 8px 16px #0078d777;
+    box-shadow: 0 4px 8px #0078d766;
   }
   to {
     border: 1px solid #ffffff00;

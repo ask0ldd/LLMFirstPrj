@@ -29,12 +29,6 @@ textarea {
   flex-direction: column;
   justify-content: left;
   padding: 1rem;
-  /*overflow-y: scroll;
-  ::-webkit-scrollbar {
-    display: none;
-  }
-  scrollbar-width: none;
-  -ms-overflow-style: none;*/
   overflow-y: auto;
 }
 
@@ -60,4 +54,26 @@ button {
 div.response {
   color: #ffffffaa;
   font-weight: 600;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ffffff22;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ffffff55;
+}
+
+/* Set the color of the scrollbar thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #0078d7;
+}
+
+/* Set the width of the scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
 }
