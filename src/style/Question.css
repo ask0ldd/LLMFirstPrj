@@ -25,4 +25,5 @@ article.question h3 {
   line-height: 1.25rem;
   /*margin: 1rem 0 0.5rem 0;*/
   margin: 0 0 0.35rem 0;
+  font-weight: 600;
 }
