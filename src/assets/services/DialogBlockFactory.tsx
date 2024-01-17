@@ -1,9 +1,9 @@
 import Answer from "../../components/Answer";
 import Question from "../../components/Question";
 
-function DialogBlockFactory({ type, text } : {type : "question" | "answer", text : string}){
+function DialogBlockFactory({ type, text, working } : {type : "question" | "answer", text : string, working? : boolean}){
     if(type == "question") return(<Question text={text}></Question>)
-    return(<Answer text={text}></Answer>)
+    return(<Answer working={working || false} text={text}></Answer>)
 }
 
 export default DialogBlockFactory

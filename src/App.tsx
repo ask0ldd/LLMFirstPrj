@@ -43,7 +43,7 @@ function App() {
     // eslint-disable-next-line no-constant-condition
     setHistory(history => {
       const historyDuplicate = [...history]
-      historyDuplicate.push({type : "answer", text : ""})
+      historyDuplicate.push({type : "answer", text : "", working : true})
       return historyDuplicate
     })
     while (true && reader) {
@@ -57,6 +57,12 @@ function App() {
         return historyDuplicate
       })
       if (done) {
+        setHistory(history =>
+          {
+            const duplicateHistory = [...history]
+            duplicateHistory[duplicateHistory.length-1].working = false
+            return duplicateHistory
+          })
         // Do something with last chunk of data then exit reader
         // setHistory(history => history  + 'Answer : \n' + streamedDatasRef.current.trim() + '\n\n')
         /*setHistory(history => {
@@ -87,4 +93,5 @@ export default App
 interface IHistory{
   type : "answer" | "question",
   text : string
+  working ? : boolean
 }

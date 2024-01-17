@@ -9,7 +9,7 @@ article.question {
   margin-top: 0.75rem;
   border: 1px solid #ffffff25;
   box-shadow: 0px 4px 8px #000000cc;
-  flex: 1 1 100%;
+  /*flex: 1 1 100%;*/
 }
 
 article.question h3,

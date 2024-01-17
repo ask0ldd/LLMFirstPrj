@@ -7,7 +7,7 @@ article.answer {
   row-gap: 0;
   max-height: min-content;
   margin-top: 0.75rem;
-  flex: 1 1 100%;
+  /*flex: 1 1 100%;*/
 }
 
 article.answer h3,
@@ -22,4 +22,17 @@ article.answer h3 {
   height: 1.25rem;
   line-height: 1.25rem;
   margin: 0 0 0.35rem 0;
+}
+
+article.working {
+  animation: working-answer 1s linear 0s infinite alternate;
+}
+
+@keyframes working-answer {
+  from {
+    border: 1px solid #0078d7ff;
+  }
+  to {
+    border: 1px solid #ffffff00;
+  }
 }
