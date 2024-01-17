@@ -1,5 +1,6 @@
 #root {
-  max-width: 1280px;
+  max-width: 1440px;
+  width: 60%;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
@@ -15,6 +16,11 @@ textarea {
   background: #1b1a2388;
   border-color: #1b1a23;
   color: #ffffffaa;
+  border-radius: 6px;
+}
+
+textarea:focus {
+  outline: 1px solid #3b3850;
 }
 
 #history {
@@ -28,6 +34,7 @@ button {
   border: 1px solid #0078d7;
   color: #fff;
   font-weight: 600;
+  border-radius: 6px;
   /*box-shadow: 0 4px 8px #72aedf;*/
 }
 

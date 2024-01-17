@@ -36,7 +36,7 @@ function App() {
     while (true && reader) {
       const { done, value } = await reader.read();
       const chunk = decoder.decode(value, { stream: true })
-      if( streamedDatasRef.current == "" && chunk == " ") continue
+      if(streamedDatasRef.current == "" && chunk.trim() == "") continue
       setStreamedDatas(chunk)
       setHistory(history => history  + chunk)
       if (done) {
@@ -60,3 +60,8 @@ function App() {
 }
 
 export default App
+
+interface IHistory{
+  type : "answer" | "question",
+  text : string
+}
