@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import './App.css'
 import { useRef, useState } from 'react'
+import DialogChunkFactory from './assets/services/DialogChunkFactory';
 
 function App() {
   const decoder = new TextDecoder('utf-8');
@@ -14,7 +15,7 @@ function App() {
     _setStreamedDatas("")
     streamedDatasRef.current = ""
   }
-  const [history, setHistory] = useState<string>("")
+  const [history, setHistory] = useState<IHistory[]>([])
 
   async function handleClick(){
 
@@ -22,7 +23,12 @@ function App() {
     if(inputValue == null) return
     
     initStreamedDatas()
-    setHistory(history => history + '\n\nQuestion :\n' + inputValue + '\n\nAnswer :\n')
+    // setHistory(history => history + '\n\nQuestion :\n' + inputValue + '\n\nAnswer :\n')
+    setHistory(history => {
+      const newHistory = [...history]
+      newHistory.push({type : "question", text : inputValue})
+      return newHistory
+    })
     const response = await fetch('http://localhost:3000/chat',
     {
         method: 'POST',
@@ -38,11 +44,15 @@ function App() {
       const chunk = decoder.decode(value, { stream: true })
       if(streamedDatasRef.current == "" && chunk.trim() == "") continue
       setStreamedDatas(chunk)
-      setHistory(history => history  + chunk)
+      // setHistory(history => history  + chunk)
       if (done) {
         // Do something with last chunk of data then exit reader
         // setHistory(history => history  + 'Answer : \n' + streamedDatasRef.current.trim() + '\n\n')
-        setHistory(history => history + '\n')
+        setHistory(history => {
+          const newHistory = [...history]
+          newHistory.push({type : "answer", text : streamedDatasRef.current})
+          return newHistory
+        })
         return
       }
     }
@@ -51,7 +61,9 @@ function App() {
 
   return (
     <div style={{display:'flex', flexDirection:'column', rowGap:"1rem", minWidth:800}}>
-      <textarea name="history" id="history" readOnly value={history}/>
+      <div id="historyContainer">
+          {history.map(chunk => DialogChunkFactory(chunk))}
+      </div>
       <textarea name="userMessage" id="userMessage"/>
       <button onClick={handleClick}>fetch</button>
       <div className="response">{streamedDatas}</div>
