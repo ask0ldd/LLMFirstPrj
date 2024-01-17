@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import './App.css'
 import { useRef, useState } from 'react'
-import DialogChunkFactory from './assets/services/DialogChunkFactory';
+import DialogBlockFactory from './assets/services/DialogBlockFactory';
 
 function App() {
   const decoder = new TextDecoder('utf-8');
+  
   const [streamedDatas, _setStreamedDatas] = useState<string>("")
   const streamedDatasRef = useRef('')
   function setStreamedDatas(chunk : string){
@@ -15,6 +16,7 @@ function App() {
     _setStreamedDatas("")
     streamedDatasRef.current = ""
   }
+
   const [history, setHistory] = useState<IHistory[]>([])
 
   async function handleClick(){
@@ -39,20 +41,29 @@ function App() {
     })
     const reader = response.body?.getReader()
     // eslint-disable-next-line no-constant-condition
+    setHistory(history => {
+      const historyDuplicate = [...history]
+      historyDuplicate.push({type : "answer", text : ""})
+      return historyDuplicate
+    })
     while (true && reader) {
       const { done, value } = await reader.read();
       const chunk = decoder.decode(value, { stream: true })
       if(streamedDatasRef.current == "" && chunk.trim() == "") continue
       setStreamedDatas(chunk)
-      // setHistory(history => history  + chunk)
+      setHistory(history => {
+        const historyDuplicate = [...history]
+        historyDuplicate[history.length-1].text = streamedDatasRef.current
+        return historyDuplicate
+      })
       if (done) {
         // Do something with last chunk of data then exit reader
         // setHistory(history => history  + 'Answer : \n' + streamedDatasRef.current.trim() + '\n\n')
-        setHistory(history => {
+        /*setHistory(history => {
           const newHistory = [...history]
           newHistory.push({type : "answer", text : streamedDatasRef.current})
           return newHistory
-        })
+        })*/
         return
       }
     }
@@ -62,7 +73,7 @@ function App() {
   return (
     <div style={{display:'flex', flexDirection:'column', rowGap:"1rem", minWidth:800}}>
       <div id="historyContainer">
-          {history.map(chunk => DialogChunkFactory(chunk))}
+          {history.map(chunk => DialogBlockFactory(chunk))}
       </div>
       <textarea name="userMessage" id="userMessage"/>
       <button onClick={handleClick}>fetch</button>

@@ -24,10 +24,12 @@ textarea {
 
 #historyContainer {
   min-height: 30rem;
+  max-height: 30rem;
   display: flex;
   flex-direction: column;
   justify-content: left;
   padding: 1rem;
+  overflow-y: scroll;
 }
 
 textarea:focus {
