@@ -2,8 +2,8 @@ import '../style/Answer.css'
 
 function Answer({text} : {text : string}){
     return(
-        <article>
-            <h3>Answer</h3>
+        <article className='answer'>
+            <h3>Answer :</h3>
             <span>{text}</span>
         </article>
     )

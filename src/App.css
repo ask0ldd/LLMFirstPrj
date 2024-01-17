@@ -18,6 +18,8 @@ textarea {
   border-color: #1b1a23;
   color: #ffffffaa;
   border-radius: 6px;
+  width: 100%;
+  display: flex;
 }
 
 #historyContainer {
@@ -25,6 +27,7 @@ textarea {
   display: flex;
   flex-direction: column;
   justify-content: left;
+  padding: 1rem;
 }
 
 textarea:focus {

@@ -1,0 +1,23 @@
+article.answer {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff11;
+  border-radius: 6px;
+  padding: 0.5rem;
+  row-gap: 0;
+  max-height: min-content;
+  margin-top: 0.75rem;
+}
+
+article.answer h3,
+article.answer span {
+  text-align: left;
+  display: flex;
+  flex: 1 1 100%;
+}
+
+article.answer h3 {
+  height: 1.25rem;
+  line-height: 1.25rem;
+  margin: 0 0 0.35rem 0;
+}
