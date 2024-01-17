@@ -31,6 +31,8 @@ function App() {
     })
   }, [historyRef.current?.scrollHeight])
 
+  let addLetterIntervalId: NodeJS.Timeout | null = null
+
   async function handleClick(){
 
     if(isStreaming.current) return
@@ -38,6 +40,8 @@ function App() {
     // href the element?
     const inputValue = (document.getElementById('userMessage') as HTMLTextAreaElement).value
     if(inputValue == null) return
+
+    if(addLetterIntervalId == null) addLetterIntervalId = setInterval(addLetterToHistory, 1000)
     
     initStreamedDatas()
     
@@ -89,6 +93,7 @@ function App() {
             duplicateHistory[duplicateHistory.length-1].working = false
             return duplicateHistory
           })
+        clearInterval(addLetterIntervalId)
         isStreaming.current = false
         return
       }
@@ -108,9 +113,12 @@ function App() {
     </div>
   )
 
-  function addToHistory(){
+  function addLetterToHistory(){
+    if(streamedDatasPos.current >= streamedDatasRef.current.length-1) return
     setHistory( history => {
-      streamedDatasRef.current[streamedDatasPos.current]
+      const duplicateHistory = [...history]
+      duplicateHistory[history.length-1].text += streamedDatasRef.current[streamedDatasPos.current]
+      return duplicateHistory
     })
     streamedDatasPos.current++
   }
