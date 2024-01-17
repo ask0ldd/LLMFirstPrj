@@ -29,12 +29,13 @@ textarea {
   flex-direction: column;
   justify-content: left;
   padding: 1rem;
-  overflow-y: scroll;
+  /*overflow-y: scroll;
   ::-webkit-scrollbar {
     display: none;
   }
   scrollbar-width: none;
-  -ms-overflow-style: none;
+  -ms-overflow-style: none;*/
+  overflow-y: auto;
 }
 
 textarea:focus {

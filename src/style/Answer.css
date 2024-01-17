@@ -36,10 +36,10 @@ article.working {
 @keyframes working-answer {
   from {
     border: 1px solid #0078d7ff;
-    box-shadow: 0 2px 4px #0078d799;
+    box-shadow: 0 8px 16px #0078d777;
   }
   to {
     border: 1px solid #ffffff00;
-    box-shadow: 0 8px 16px #ffffff00;
+    box-shadow: 0 2px 4px #ffffff00;
   }
 }
