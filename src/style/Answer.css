@@ -7,6 +7,7 @@ article.answer {
   row-gap: 0;
   max-height: min-content;
   margin-top: 0.75rem;
+  flex: 1 1 100%;
 }
 
 article.answer h3,

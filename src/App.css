@@ -18,8 +18,8 @@ textarea {
   border-color: #1b1a23;
   color: #ffffffaa;
   border-radius: 6px;
-  width: 100%;
   display: flex;
+  flex: 1 1 100%;
 }
 
 #historyContainer {
@@ -30,6 +30,11 @@ textarea {
   justify-content: left;
   padding: 1rem;
   overflow-y: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 textarea:focus {
