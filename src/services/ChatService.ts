@@ -1,5 +1,5 @@
 export class ChatService{
-    static async sendQuestion(question : string) : Promise<unknown>{
+    static async postQuestion(question : string) : Promise<unknown>{
         try {
             const response = await fetch('http://localhost:3000/chat',
             {
@@ -9,6 +9,7 @@ export class ChatService{
                 },
                 body: JSON.stringify({"question" : question})      
             })
+            if(response.status != 200) throw new Error("Can't get a reply to your question.")
             return response
         }catch(error){
             console.error(error)

@@ -46,7 +46,7 @@ function App() {
       return newHistory
     })
 
-    const response = await ChatService.sendQuestion(inputValue)
+    const response = await ChatService.postQuestion(inputValue)
 
     if(!(response instanceof Response)) return // !!! add newhistory pull?
     const reader = response.body?.getReader()
@@ -94,9 +94,10 @@ function App() {
     <div style={{display:'flex', flexDirection:'column', rowGap:"1rem", minWidth:800}}>
       <div ref={autoScrollHistoryRef} id="historyContainer">
           {history.map(chunk => DialogBlockFactory(chunk))}
+          <div className="historyTopGradient"></div>
       </div>
-      <textarea name="userMessage" id="userMessage"/>
-      <button onClick={handleClick}>fetch</button>
+      <textarea className="userMessage" id="userMessage"/>
+      <button onClick={handleClick}>Send your Question to your Assistant.</button>
       <div className="response">{streamedDatas}</div>
     </div>
   )
