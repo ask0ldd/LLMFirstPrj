@@ -2,11 +2,12 @@
 import './App.css'
 import { useEffect, useRef, useState } from 'react'
 import DialogBlockFactory from './assets/services/DialogBlockFactory';
+import { ChatService } from './services/ChatService';
 
 function App() {
   const decoder = new TextDecoder('utf-8');
 
-  const streamedDatasPos = useRef(0)
+  const streamedLetterPos = useRef(0)
   const isStreaming = useRef(false)
   
   const [streamedDatas, _setStreamedDatas] = useState<string>("")
@@ -31,17 +32,16 @@ function App() {
     })
   }, [historyRef.current?.scrollHeight])
 
-  let addLetterIntervalId: NodeJS.Timeout | null = null
+  const addLetterIntervalId = useRef<NodeJS.Timeout | null>(null)
 
   async function handleClick(){
-
-    if(isStreaming.current) return
 
     // href the element?
     const inputValue = (document.getElementById('userMessage') as HTMLTextAreaElement).value
     if(inputValue == null) return
 
-    if(addLetterIntervalId == null) addLetterIntervalId = setInterval(addLetterToHistory, 1000)
+    if(isStreaming.current) return
+    isStreaming.current = true
     
     initStreamedDatas()
     
@@ -51,15 +51,9 @@ function App() {
       return newHistory
     })
 
-    const response = await fetch('http://localhost:3000/chat',
-    {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({"question" : inputValue})      
-    })
+    const response = await ChatService.sendQuestion(inputValue)
 
+    if(!(response instanceof Response)) return
     const reader = response.body?.getReader()
     
     setHistory(history => {
@@ -69,7 +63,8 @@ function App() {
       return historyDuplicate
     })
 
-    isStreaming.current = true
+    if(addLetterIntervalId.current == null) 
+      addLetterIntervalId.current = setInterval(() => addLetterToHistory(addLetterIntervalId.current), 1000)
 
     // start reading the stream of datas
     while (true && reader) {
@@ -78,11 +73,6 @@ function App() {
       const chunk = decoder.decode(value, { stream: true })
       if(streamedDatasRef.current == "" && chunk.trim() == "") continue
       setStreamedDatas(chunk)
-      /*setHistory(history => {
-        const historyDuplicate = [...history]
-        historyDuplicate[history.length-1].text = streamedDatasRef.current
-        return historyDuplicate
-      })*/
 
       // end of read
       if (done) {
@@ -93,7 +83,6 @@ function App() {
             duplicateHistory[duplicateHistory.length-1].working = false
             return duplicateHistory
           })
-        clearInterval(addLetterIntervalId)
         isStreaming.current = false
         return
       }
@@ -104,7 +93,7 @@ function App() {
 
   return (
     <div style={{display:'flex', flexDirection:'column', rowGap:"1rem", minWidth:800}}>
-      <div /*onScroll={handleHistoryScroll}*/ ref={historyRef} id="historyContainer">
+      <div ref={historyRef} id="historyContainer">
           {history.map(chunk => DialogBlockFactory(chunk))}
       </div>
       <textarea name="userMessage" id="userMessage"/>
@@ -113,19 +102,19 @@ function App() {
     </div>
   )
 
-  function addLetterToHistory(){
-    if(streamedDatasPos.current >= streamedDatasRef.current.length-1) return
-    setHistory( history => {
+  function addLetterToHistory(intervalId : NodeJS.Timeout | null){
+    if(intervalId == null) return
+    if(streamedLetterPos.current >= streamedDatasRef.current.length-1) return
+    const letter = streamedDatasRef.current[streamedLetterPos.current]
+    // console.log(new Date() + ' : ' + letter)
+    setHistory(history => {
       const duplicateHistory = [...history]
-      duplicateHistory[history.length-1].text += streamedDatasRef.current[streamedDatasPos.current]
+      duplicateHistory[duplicateHistory.length-1].text += letter
       return duplicateHistory
     })
-    streamedDatasPos.current++
+    if(!isStreaming && streamedLetterPos.current == streamedDatasRef.current.length-1) clearInterval(intervalId)
+    streamedLetterPos.current++
   }
-
-  /*function handleHistoryScroll(){
-    historyRef.current?.scrollBy(0, 10)
-  }*/
 }
 
 export default App
