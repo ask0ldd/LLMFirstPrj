@@ -60,6 +60,15 @@ button {
   border-radius: 6px;
   cursor: pointer;
   /*box-shadow: 0 4px 8px #72aedf;*/
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.hr {
+  height: 1px;
+  width: 100%;
+  background: #0078d777;
 }
 
 div.response {

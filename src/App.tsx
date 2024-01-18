@@ -59,7 +59,7 @@ function App() {
     })
 
     if(addLetterIntervalId.current == null) 
-      addLetterIntervalId.current = setInterval(() => addLetterToHistory(addLetterIntervalId), 1000)
+      addLetterIntervalId.current = setInterval(() => addLetterToHistory(addLetterIntervalId), 100)
 
     // start reading the stream of datas
     while (true && reader) {
@@ -96,15 +96,15 @@ function App() {
           {history.map(chunk => DialogBlockFactory(chunk))}
           <div className="historyTopGradient"></div>
       </div>
+      <div className='hr'/>
       <textarea className="userMessage" id="userMessage"/>
-      <button onClick={handleClick}>Send your Question to your Assistant.</button>
-      <div className="response">{streamedDatas}</div>
+      <button onClick={handleClick}>Send a Question to your Assistant.</button>
+      {/*<div className="response">{streamedDatas}</div>*/}
     </div>
   )
 
   // Convert the token stream to a Char stream to improve the perception of activity
   function addLetterToHistory(intervalIdRef : React.MutableRefObject<NodeJS.Timeout | null>){
-    // console.log("add")
     if(intervalIdRef.current == null) return
     // If cursor is at the end of the received datas & the stream process is still active => wait for more data
     if(streamedLetterPos.current >= streamedDatasRef.current.length) return
@@ -118,11 +118,15 @@ function App() {
     })
     streamedLetterPos.current++
   }
+
+  function navQuestionsHistory(){
+    if("next" && history.length) return
+  }
 }
 
 export default App
 
-interface IHistory{
+export interface IHistory{
   type : "answer" | "question",
   text : string
   working ? : boolean
