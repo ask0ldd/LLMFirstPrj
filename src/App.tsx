@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import './App.css'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import DialogBlockFactory from './assets/services/DialogBlockFactory';
 import { ChatService } from './services/ChatService';
+import useAutoScrollToLastItem from './hooks/useAutoScrollToLastItem';
 
 function App() {
   const decoder = new TextDecoder('utf-8');
@@ -23,14 +24,7 @@ function App() {
 
   const [history, setHistory] = useState<IHistory[]>([])
 
-  const historyRef = useRef<HTMLDivElement | null>(null)
-
-  useEffect(() => {
-    historyRef.current?.scrollTo({
-      top: historyRef.current.scrollHeight,
-      behavior: 'smooth'
-    })
-  }, [historyRef.current?.scrollHeight])
+  const autoScrollHistoryRef = useAutoScrollToLastItem()
 
   const addLetterIntervalId = useRef<NodeJS.Timeout | null>(null)
 
@@ -93,7 +87,7 @@ function App() {
 
   return (
     <div style={{display:'flex', flexDirection:'column', rowGap:"1rem", minWidth:800}}>
-      <div ref={historyRef} id="historyContainer">
+      <div ref={autoScrollHistoryRef} id="historyContainer">
           {history.map(chunk => DialogBlockFactory(chunk))}
       </div>
       <textarea name="userMessage" id="userMessage"/>
