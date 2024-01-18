@@ -10,6 +10,7 @@ function App() {
 
   const streamedLetterPos = useRef(0)
   const isStreaming = useRef(false)
+  const addLetterIntervalId = useRef<NodeJS.Timeout | null>(null)
   
   const [streamedDatas, _setStreamedDatas] = useState<string>("")
   const streamedDatasRef = useRef('')
@@ -17,16 +18,16 @@ function App() {
     _setStreamedDatas(data => data + chunk)
     streamedDatasRef.current += chunk
   }
-  function initStreamedDatas(){
+  function resetStreamedDatas(){
     _setStreamedDatas("")
     streamedDatasRef.current = ""
+    streamedLetterPos.current = 0
+    addLetterIntervalId.current = null
   }
 
+  // Q & A History + Autoscroll feature
   const [history, setHistory] = useState<IHistory[]>([])
-
   const autoScrollHistoryRef = useAutoScrollToLastItem()
-
-  const addLetterIntervalId = useRef<NodeJS.Timeout | null>(null)
 
   async function handleClick(){
 
@@ -37,7 +38,7 @@ function App() {
     if(isStreaming.current) return
     isStreaming.current = true
     
-    initStreamedDatas()
+    resetStreamedDatas()
     
     setHistory(history => {
       const newHistory = [...history]
@@ -47,7 +48,7 @@ function App() {
 
     const response = await ChatService.sendQuestion(inputValue)
 
-    if(!(response instanceof Response)) return
+    if(!(response instanceof Response)) return // !!! add newhistory pull?
     const reader = response.body?.getReader()
     
     setHistory(history => {
@@ -58,14 +59,18 @@ function App() {
     })
 
     if(addLetterIntervalId.current == null) 
-      addLetterIntervalId.current = setInterval(() => addLetterToHistory(addLetterIntervalId.current), 1000)
+      addLetterIntervalId.current = setInterval(() => addLetterToHistory(addLetterIntervalId), 1000)
 
     // start reading the stream of datas
     while (true && reader) {
 
       const { done, value } = await reader.read();
       const chunk = decoder.decode(value, { stream: true })
+
+      // ignore the first token if whitespace
       if(streamedDatasRef.current == "" && chunk.trim() == "") continue
+
+      // !!! recreate callback !!!to be able to do setStreamedDatas(streamedDatas => streamedDatas + chunk)
       setStreamedDatas(chunk)
 
       // end of read
@@ -96,17 +101,20 @@ function App() {
     </div>
   )
 
-  function addLetterToHistory(intervalId : NodeJS.Timeout | null){
-    if(intervalId == null) return
-    if(streamedLetterPos.current >= streamedDatasRef.current.length-1) return
+  // Convert the token stream to a Char stream to improve the perception of activity
+  function addLetterToHistory(intervalIdRef : React.MutableRefObject<NodeJS.Timeout | null>){
+    // console.log("add")
+    if(intervalIdRef.current == null) return
+    // If cursor is at the end of the received datas & the stream process is still active => wait for more data
+    if(streamedLetterPos.current >= streamedDatasRef.current.length) return
+    // If cursor is at the end of the received datas & the stream process is off => clearInterval
+    if(!isStreaming.current && streamedLetterPos.current == streamedDatasRef.current.length) clearInterval(intervalIdRef.current)
     const letter = streamedDatasRef.current[streamedLetterPos.current]
-    // console.log(new Date() + ' : ' + letter)
     setHistory(history => {
       const duplicateHistory = [...history]
       duplicateHistory[duplicateHistory.length-1].text += letter
       return duplicateHistory
     })
-    if(!isStreaming && streamedLetterPos.current == streamedDatasRef.current.length-1) clearInterval(intervalId)
     streamedLetterPos.current++
   }
 }
