@@ -6,21 +6,21 @@ function useHistoryNavigator(history : IHistory[] /*, userMessageRef */){
 
     const historyPos = useRef(0)
 
-    function getNextQuestion() {
-        if(historyPos.current + 2 > history.length-1) return history[historyPos.current]
+    function getNextQuestion() : string {
+        if(historyPos.current + 2 > history.length-1) return history[historyPos.current].text
         historyPos.current += 2
-        return history[historyPos.current]
+        return history[historyPos.current].text
     }
 
-    function getPreviousQuestion() {
-        if(historyPos.current - 2 < 0) return history[historyPos.current]
+    function getPreviousQuestion() : string {
+        if(historyPos.current - 2 < 0) return history[historyPos.current].text
         historyPos.current -= 2
-        return history[historyPos.current]
+        return history[historyPos.current].text
     }
 
-    function getLastQuestion(){
+    function getLastQuestion() : string{
         historyPos.current = history.length-2
-        return history[historyPos.current]
+        return history[historyPos.current].text
     }
 
     return {getNextQuestion, getPreviousQuestion, getLastQuestion}

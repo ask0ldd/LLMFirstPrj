@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import DialogBlockFactory from './assets/services/DialogBlockFactory';
 import { ChatService } from './services/ChatService';
 import useAutoScrollToLastItem from './hooks/useAutoScrollToLastItem';
+import useHistoryNavigator from './hooks/useHistoryNavigator';
 
 function App() {
   const decoder = new TextDecoder('utf-8');
@@ -28,6 +29,7 @@ function App() {
   // Q & A History + Autoscroll feature
   const [history, setHistory] = useState<IHistory[]>([])
   const autoScrollHistoryRef = useAutoScrollToLastItem()
+  const {getNextQuestion, getPreviousQuestion} = useHistoryNavigator(history)
 
   async function handleClick(){
 
@@ -98,6 +100,7 @@ function App() {
       </div>
       <div className='hr'/>
       <textarea className="userMessage" id="userMessage"/>
+      <div className='historyNavContainer'><button onClick={handlePrevClick}>prev</button><button onClick={handleNextClick}>next</button></div>
       <button onClick={handleClick}>Send a Question to your Assistant.</button>
       {/*<div className="response">{streamedDatas}</div>*/}
     </div>
@@ -117,6 +120,14 @@ function App() {
       return duplicateHistory
     })
     streamedLetterPos.current++
+  }
+
+  function handlePrevClick(){
+    (document.querySelector(".userMessage") as HTMLTextAreaElement).value = getPreviousQuestion()
+  }
+
+  function handleNextClick(){
+    (document.querySelector(".userMessage") as HTMLTextAreaElement).value = getNextQuestion()
   }
 
   /*function navQuestionsHistory(){

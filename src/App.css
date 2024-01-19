@@ -71,6 +71,20 @@ button {
   background: #0078d777;
 }
 
+div.historyNavContainer {
+  display: flex;
+  flex-direction: row;
+  column-gap: 0.75rem;
+  justify-content: end;
+  align-items: end;
+}
+
+.historyNavContainer button {
+  width: fit-content;
+  margin: 0;
+  padding: 0 0.75rem;
+}
+
 div.response {
   color: #ffffffaa;
   font-weight: 600;
