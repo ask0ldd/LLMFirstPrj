@@ -27,13 +27,13 @@ textarea.userMessage {
 }
 
 #historyContainer {
-  min-height: 30rem;
+  display: grid;
+  grid-auto-rows: auto;
+  grid-row-gap: 1rem;
   max-height: 30rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: end;
+  min-height: 30rem;
   padding: 1rem;
-  overflow-y: auto;
+  overflow-y: scroll;
   position: relative;
 }
 

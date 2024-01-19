@@ -3,10 +3,10 @@ article.answer {
   flex-direction: column;
   background: #ffffff11;
   border-radius: 6px;
-  padding: 0.5rem;
+  padding: 1rem;
   row-gap: 0;
   max-height: min-content;
-  margin-top: 0.75rem;
+  /*margin-top: 0.75rem;*/
   /*flex: 1 1 100%;*/
 }
 
