@@ -119,9 +119,9 @@ function App() {
     streamedLetterPos.current++
   }
 
-  function navQuestionsHistory(){
+  /*function navQuestionsHistory(){
     if("next" && history.length) return
-  }
+  }*/
 }
 
 export default App

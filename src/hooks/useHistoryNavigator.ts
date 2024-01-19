@@ -2,23 +2,28 @@
 import { useRef } from "react"
 import { IHistory } from "../App"
 
-function useHistoryNavigator(history : IHistory[]){
+function useHistoryNavigator(history : IHistory[] /*, userMessageRef */){
 
     const historyPos = useRef(0)
 
-    function goToNextQuestion() {
-
+    function getNextQuestion() {
+        if(historyPos.current + 2 > history.length-1) return history[historyPos.current]
+        historyPos.current += 2
+        return history[historyPos.current]
     }
 
-    function goToPreviousQuestion() {
-
+    function getPreviousQuestion() {
+        if(historyPos.current - 2 < 0) return history[historyPos.current]
+        historyPos.current -= 2
+        return history[historyPos.current]
     }
 
-    function goToLastQuestion(){
-
+    function getLastQuestion(){
+        historyPos.current = history.length-2
+        return history[historyPos.current]
     }
 
-    return {goToNextQuestion, goToPreviousQuestion, goToLastQuestion}
+    return {getNextQuestion, getPreviousQuestion, getLastQuestion}
 
 }
 
